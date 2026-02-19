@@ -1,0 +1,6 @@
+name,pass_through_pct,redirect_to_pension,revenue_bn
+Absorb cost + Maintain pension,0,true,3.50
+Spread cost + Maintain pension,100,true,2.79
+Absorb cost + Take cash,0,false,5.89
+Spread cost + Take cash,100,false,5.19
+OBR 76% pass-through + Maintain pension,76,true,2.96

@@ -1,0 +1,5 @@
+band,pct_workers,nics_rate
+Basic rate (8% NICs; <=£50270),0.451,0.08
+Higher rate (2% NICs; >£50270),0.549,0.02
+PE implied average,,0.047
+OBR average,,0.027

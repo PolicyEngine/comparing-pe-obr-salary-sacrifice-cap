@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Roboto", -apple-system, sans-serif; background: #fff; }
+  #controls { display: flex; justify-content: center; gap: 4px; margin: 12px 0 8px; }
+  .toggle-btn {
+    padding: 6px 16px; font-size: 0.85rem; font-weight: 500;
+    border: 1px solid #e2e8f0; background: #f8fafc; color: #64748b;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .toggle-btn:first-child { border-radius: 6px 0 0 6px; }
+  .toggle-btn:last-child { border-radius: 0 6px 6px 0; }
+  .toggle-btn:hover { background: #f1f5f9; }
+  .toggle-btn.active { background: #2C6496; border-color: #2C6496; color: #fff; }
+  #chart { width: 100%; height: 440px; }
+</style>
+</head>
+<body>
+<div id="controls">
+  <button class="toggle-btn active" onclick="setMode('relative')">Relative (%)</button>
+  <button class="toggle-btn" onclick="setMode('absolute')">Absolute (&pound;)</button>
+</div>
+<div id="chart"></div>
+<script>
+let data = [];
+let mode = 'relative';
+
+fetch('/data/distributional.csv')
+  .then(r => r.text())
+  .then(text => {
+    const lines = text.trim().split('\n');
+    const headers = lines[0].split(',');
+    data = lines.slice(1).map(line => {
+      const vals = line.split(',');
+      const row = {};
+      headers.forEach((h, i) => { row[h.trim()] = isNaN(vals[i]) ? vals[i] : parseFloat(vals[i]); });
+      return row;
+    });
+    render();
+  });
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  render();
+}
+
+function render() {
+  const deciles = data.map(d => d.decile);
+  const values = mode === 'relative'
+    ? data.map(d => d.pct_change)
+    : data.map(d => d.avg_change_gbp);
+  const colors = values.map(v => v < 0 ? '#9ca3af' : '#9ca3af');
+  const hovertemplate = mode === 'relative'
+    ? 'Decile %{x}<br>%{y:.2f}%<extra></extra>'
+    : 'Decile %{x}<br>\u00A3%{y:,.0f}<extra></extra>';
+
+  const trace = {
+    x: deciles, y: values, type: 'bar',
+    marker: { color: colors },
+    hovertemplate: hovertemplate,
+  };
+
+  const layout = {
+    xaxis: {
+      title: { text: 'Income decile', font: { size: 12, color: '#64748b' } },
+      tickmode: 'linear', dtick: 1,
+    },
+    yaxis: {
+      title: {
+        text: mode === 'relative' ? 'Change in household income (%)' : 'Change in household income (\u00A3/year)',
+        font: { size: 12, color: '#64748b' },
+      },
+      tickformat: mode === 'relative' ? '.2f' : ',.0f',
+      tickprefix: mode === 'absolute' ? '\u00A3' : '',
+      ticksuffix: mode === 'relative' ? '%' : '',
+      zeroline: true, zerolinecolor: '#1a1a1a', zerolinewidth: 1,
+      gridcolor: '#f1f5f9',
+    },
+    margin: { t: 16, b: 50, l: 80, r: 24 },
+    plot_bgcolor: '#fff',
+    paper_bgcolor: '#fff',
+    font: { family: 'Roboto, -apple-system, sans-serif' },
+    hoverlabel: { bgcolor: '#fff', bordercolor: '#e2e8f0', font: { size: 13 } },
+  };
+
+  Plotly.react('chart', [trace], layout, { responsive: true, displayModeBar: false });
+}
+</script>
+</body>
+</html>

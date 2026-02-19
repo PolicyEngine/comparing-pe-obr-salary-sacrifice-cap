@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Roboto", -apple-system, sans-serif; background: #fff; }
+  #chart { width: 100%; height: 460px; }
+</style>
+</head>
+<body>
+<div id="chart"></div>
+<script>
+fetch('/data/winners_losers.csv')
+  .then(r => r.text())
+  .then(text => {
+    const lines = text.trim().split('\n');
+    const headers = lines[0].split(',');
+    const data = lines.slice(1).map(line => {
+      const vals = line.split(',');
+      const row = {};
+      headers.forEach((h, i) => { row[h.trim()] = isNaN(vals[i]) ? vals[i] : parseFloat(vals[i]); });
+      return row;
+    });
+
+    const deciles = data.map(d => d.decile);
+
+    const losers = {
+      x: deciles, y: data.map(d => d.pct_losers), name: 'Losers', type: 'bar',
+      marker: { color: '#9ca3af' },
+      hovertemplate: 'Decile %{x}<br>Losers: %{y:.1f}%<extra></extra>',
+    };
+    const winners = {
+      x: deciles, y: data.map(d => d.pct_winners), name: 'Winners', type: 'bar',
+      marker: { color: '#16a34a' },
+      hovertemplate: 'Decile %{x}<br>Winners: %{y:.1f}%<extra></extra>',
+    };
+    const noChange = {
+      x: deciles, y: data.map(d => d.pct_no_change), name: 'No change', type: 'bar',
+      marker: { color: '#d1d5db' },
+      hovertemplate: 'Decile %{x}<br>No change: %{y:.1f}%<extra></extra>',
+    };
+
+    const layout = {
+      barmode: 'stack',
+      xaxis: {
+        title: { text: 'Income decile', font: { size: 12, color: '#64748b' } },
+        tickmode: 'linear', dtick: 1,
+      },
+      yaxis: {
+        title: { text: '% of people', font: { size: 12, color: '#64748b' } },
+        ticksuffix: '%', range: [0, 105],
+        gridcolor: '#f1f5f9',
+      },
+      margin: { t: 16, b: 50, l: 60, r: 24 },
+      plot_bgcolor: '#fff',
+      paper_bgcolor: '#fff',
+      font: { family: 'Roboto, -apple-system, sans-serif' },
+      legend: { orientation: 'h', y: 1.08, x: 0.5, xanchor: 'center' },
+      hoverlabel: { bgcolor: '#fff', bordercolor: '#e2e8f0', font: { size: 13 } },
+    };
+
+    Plotly.newPlot('chart', [losers, winners, noChange], layout, { responsive: true, displayModeBar: false });
+  });
+</script>
+</body>
+</html>
