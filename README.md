@@ -2,7 +2,7 @@
 
 Dashboard comparing PolicyEngine's microsimulation estimates with the OBR's supplementary forecast for the proposed £2,000 salary sacrifice pension contributions cap.
 
-**Live dashboard**: [comparing-pe-obr-salary-sacrifice-cap.vercel.app](https://comparing-pe-obr-salary-sacrifice-cap.vercel.app)
+**Live dashboard**: [comparing-pe-obr-salary-sacrifice-cap-policy-engine.vercel.app](https://comparing-pe-obr-salary-sacrifice-cap-policy-engine.vercel.app)
 
 ## What's included
 
