@@ -241,8 +241,11 @@ export default function Dashboard() {
           pension contributions cap using a full microsimulation of the UK
           tax-benefit system, built on the enhanced Family Resources Survey (FRS)
           with salary sacrifice values estimated from survey and administrative
-          data. This post presents our modelling approach, revenue and
-          distributional results, and a comparison with the OBR's{" "}
+          data. This post builds on our{" "}
+          <a href="https://www.policyengine.org/uk/research/uk-salary-sacrifice-cap">
+            earlier analysis of the salary sacrifice cap
+          </a>{" "}
+          and presents a comparison with the OBR's{" "}
           <a href="https://obr.uk/supplementary-forecast-information-salary-sacrifice-costing/">
             supplementary forecast
           </a>.
