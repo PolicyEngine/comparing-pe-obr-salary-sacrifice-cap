@@ -1,4 +1,14 @@
 node_modules/
+.next/
+out/
+build/
 dist/
+coverage/
+.env
+.env.local
+.env*.local
+.vercel
+*.tsbuildinfo
+next-env.d.ts
 .DS_Store
 data/*.h5
